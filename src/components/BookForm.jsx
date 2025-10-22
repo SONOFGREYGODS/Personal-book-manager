@@ -29,7 +29,7 @@ export default function BookForm({ initial, onSubmit, onCancel }) {
     return e;
   }
 
-  async function handleSubmit(ev) {
+  function handleSubmit(ev) {
     ev.preventDefault();
     const e = validate(values);
     setErrors(e);
@@ -42,16 +42,20 @@ export default function BookForm({ initial, onSubmit, onCancel }) {
       rating: values.rating === '' ? null : Number(values.rating),
       cover_url: values.cover_url.trim() || null,
     };
+    onSubmit(payload);
+  }
 
-    const ok = await onSubmit(payload);
 
-    // Очищаем форму только в режиме "Добавить" и только при успехе
-    if (ok && !initial) {
+  function handleCancel() {
+    if (typeof onCancel === 'function' && initial) {
+      // В режиме редактирования — вызываем родительский onCancel (сбросит editing)
+      onCancel();
+    } else {
+      // В режиме добавления — просто очищаем поля локально
       setValues(empty);
       setErrors({});
     }
   }
-
   return (
     <form onSubmit={handleSubmit} className="form">
       <label>
@@ -116,7 +120,7 @@ export default function BookForm({ initial, onSubmit, onCancel }) {
 
       <div className="actions">
         {onCancel && (
-          <button type="button" className="btn ghost" onClick={onCancel}>
+          <button type="button" className="btn ghost" onClick={handleCancel}>
             Отмена
           </button>
         )}
