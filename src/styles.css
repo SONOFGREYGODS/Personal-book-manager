@@ -323,3 +323,13 @@ input[type="number"]::-webkit-inner-spin-button {
 		place-items: center;
 	}
 }
+
+.grid { align-items: start; }
+
+.form-card {
+  z-index: 10;
+}
+
+@media (max-width: 900px) {
+  .form-card { position: static; top: auto; z-index: auto; }
+}
