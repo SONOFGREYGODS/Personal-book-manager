@@ -29,7 +29,7 @@ export default function BookForm({ initial, onSubmit, onCancel }) {
     return e;
   }
 
-  function handleSubmit(ev) {
+  async function handleSubmit(ev) {
     ev.preventDefault();
     const e = validate(values);
     setErrors(e);
@@ -42,7 +42,14 @@ export default function BookForm({ initial, onSubmit, onCancel }) {
       rating: values.rating === '' ? null : Number(values.rating),
       cover_url: values.cover_url.trim() || null,
     };
-    onSubmit(payload);
+
+    const ok = await onSubmit(payload);
+
+    // Очищаем форму только в режиме "Добавить" и только при успехе
+    if (ok && !initial) {
+      setValues(empty);
+      setErrors({});
+    }
   }
 
   return (

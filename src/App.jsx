@@ -48,9 +48,10 @@ export default function App() {
     const { data, error: err } = await supabase.from('books').insert(payload).select().single();
     if (err) {
       setError(err.message);
-      return;
+      return false;
     }
     setBooks((prev) => [data, ...prev]);
+    return true;
   }
 
   async function updateBook(id, payload) {
@@ -63,10 +64,11 @@ export default function App() {
       .single();
     if (err) {
       setError(err.message);
-      return;
+      return false;
     }
     setBooks((prev) => prev.map((b) => (b.id === id ? data : b)));
     setEditing(null);
+    return true;
   }
 
   async function deleteBook(id) {
@@ -107,8 +109,8 @@ export default function App() {
             initial={editing}
             onCancel={() => setEditing(null)}
             onSubmit={async (values) => {
-              if (editing) await updateBook(editing.id, values);
-              else await addBook(values);
+              if (editing) return await updateBook(editing.id, values);
+              return await addBook(values);
             }}
           />
           {error && <p className="error">{error}</p>}
